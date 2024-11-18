@@ -37,6 +37,11 @@ builder.Services.AddDbContext<BookingDbContext>(
     }
 );
 builder.Services.AddApiAuthentication();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<BookingDbContext>();
+    db.Database.Migrate();
+}
 var app = builder.Build();
 
 app.UseCors();
@@ -70,10 +75,5 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await SeedDevelopmentData.SeedDevUser(services, app.Configuration);
-}
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<BookingDbContext>();
-    db.Database.Migrate();
 }
 app.Run();
