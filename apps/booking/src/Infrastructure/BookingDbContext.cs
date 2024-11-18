@@ -12,5 +12,5 @@ public class BookingDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<CustomerDbModel> Customers { get; set; }
 
-    public DbSet<BookingDbModel> Bookings { get; set; }
+    public DbSet<OrderDbModel> Orders { get; set; }
 }

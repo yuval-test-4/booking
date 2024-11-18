@@ -9,21 +9,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Booking.APIs;
 
-public abstract class BookingsServiceBase : IBookingsService
+public abstract class OrdersServiceBase : IOrdersService
 {
     protected readonly BookingDbContext _context;
 
-    public BookingsServiceBase(BookingDbContext context)
+    public OrdersServiceBase(BookingDbContext context)
     {
         _context = context;
     }
 
     /// <summary>
-    /// Create one booking
+    /// Create one order
     /// </summary>
-    public async Task<Booking> CreateBooking(BookingCreateInput createDto)
+    public async Task<Order> CreateOrder(OrderCreateInput createDto)
     {
-        var booking = new BookingDbModel
+        var order = new OrderDbModel
         {
             CreatedAt = createDto.CreatedAt,
             UpdatedAt = createDto.UpdatedAt
@@ -31,19 +31,19 @@ public abstract class BookingsServiceBase : IBookingsService
 
         if (createDto.Id != null)
         {
-            booking.Id = createDto.Id;
+            order.Id = createDto.Id;
         }
         if (createDto.Customer != null)
         {
-            booking.Customer = await _context
+            order.Customer = await _context
                 .Customers.Where(customer => createDto.Customer.Id == customer.Id)
                 .FirstOrDefaultAsync();
         }
 
-        _context.Bookings.Add(booking);
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<BookingDbModel>(booking.Id);
+        var result = await _context.FindAsync<OrderDbModel>(order.Id);
 
         if (result == null)
         {
@@ -54,77 +54,77 @@ public abstract class BookingsServiceBase : IBookingsService
     }
 
     /// <summary>
-    /// Delete one booking
+    /// Delete one order
     /// </summary>
-    public async Task DeleteBooking(BookingWhereUniqueInput uniqueId)
+    public async Task DeleteOrder(OrderWhereUniqueInput uniqueId)
     {
-        var booking = await _context.Bookings.FindAsync(uniqueId.Id);
-        if (booking == null)
+        var order = await _context.Orders.FindAsync(uniqueId.Id);
+        if (order == null)
         {
             throw new NotFoundException();
         }
 
-        _context.Bookings.Remove(booking);
+        _context.Orders.Remove(order);
         await _context.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Find many bookings
+    /// Find many orders
     /// </summary>
-    public async Task<List<Booking>> Bookings(BookingFindManyArgs findManyArgs)
+    public async Task<List<Order>> Orders(OrderFindManyArgs findManyArgs)
     {
-        var bookings = await _context
-            .Bookings.Include(x => x.Customer)
+        var orders = await _context
+            .Orders.Include(x => x.Customer)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
             .ApplyOrderBy(findManyArgs.SortBy)
             .ToListAsync();
-        return bookings.ConvertAll(booking => booking.ToDto());
+        return orders.ConvertAll(order => order.ToDto());
     }
 
     /// <summary>
-    /// Meta data about booking records
+    /// Meta data about order records
     /// </summary>
-    public async Task<MetadataDto> BookingsMeta(BookingFindManyArgs findManyArgs)
+    public async Task<MetadataDto> OrdersMeta(OrderFindManyArgs findManyArgs)
     {
-        var count = await _context.Bookings.ApplyWhere(findManyArgs.Where).CountAsync();
+        var count = await _context.Orders.ApplyWhere(findManyArgs.Where).CountAsync();
 
         return new MetadataDto { Count = count };
     }
 
     /// <summary>
-    /// Get one booking
+    /// Get one order
     /// </summary>
-    public async Task<Booking> Booking(BookingWhereUniqueInput uniqueId)
+    public async Task<Order> Order(OrderWhereUniqueInput uniqueId)
     {
-        var bookings = await this.Bookings(
-            new BookingFindManyArgs { Where = new BookingWhereInput { Id = uniqueId.Id } }
+        var orders = await this.Orders(
+            new OrderFindManyArgs { Where = new OrderWhereInput { Id = uniqueId.Id } }
         );
-        var booking = bookings.FirstOrDefault();
-        if (booking == null)
+        var order = orders.FirstOrDefault();
+        if (order == null)
         {
             throw new NotFoundException();
         }
 
-        return booking;
+        return order;
     }
 
     /// <summary>
-    /// Update one booking
+    /// Update one order
     /// </summary>
-    public async Task UpdateBooking(BookingWhereUniqueInput uniqueId, BookingUpdateInput updateDto)
+    public async Task UpdateOrder(OrderWhereUniqueInput uniqueId, OrderUpdateInput updateDto)
     {
-        var booking = updateDto.ToModel(uniqueId);
+        var order = updateDto.ToModel(uniqueId);
 
         if (updateDto.Customer != null)
         {
-            booking.Customer = await _context
+            order.Customer = await _context
                 .Customers.Where(customer => updateDto.Customer == customer.Id)
                 .FirstOrDefaultAsync();
         }
 
-        _context.Entry(booking).State = EntityState.Modified;
+        _context.Entry(order).State = EntityState.Modified;
 
         try
         {
@@ -132,7 +132,7 @@ public abstract class BookingsServiceBase : IBookingsService
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!_context.Bookings.Any(e => e.Id == booking.Id))
+            if (!_context.Orders.Any(e => e.Id == order.Id))
             {
                 throw new NotFoundException();
             }
@@ -144,18 +144,18 @@ public abstract class BookingsServiceBase : IBookingsService
     }
 
     /// <summary>
-    /// Get a customer record for booking
+    /// Get a customer record for order
     /// </summary>
-    public async Task<Customer> GetCustomer(BookingWhereUniqueInput uniqueId)
+    public async Task<Customer> GetCustomer(OrderWhereUniqueInput uniqueId)
     {
-        var booking = await _context
-            .Bookings.Where(booking => booking.Id == uniqueId.Id)
-            .Include(booking => booking.Customer)
+        var order = await _context
+            .Orders.Where(order => order.Id == uniqueId.Id)
+            .Include(order => order.Customer)
             .FirstOrDefaultAsync();
-        if (booking == null)
+        if (order == null)
         {
             throw new NotFoundException();
         }
-        return booking.Customer.ToDto();
+        return order.Customer.ToDto();
     }
 }

@@ -1,6 +1,6 @@
 namespace Booking.APIs.Dtos;
 
-public class BookingCreateInput
+public class OrderCreateInput
 {
     public DateTime CreatedAt { get; set; }
 

@@ -36,34 +36,28 @@ public interface ICustomersService
     public Task UpdateCustomer(CustomerWhereUniqueInput uniqueId, CustomerUpdateInput updateDto);
 
     /// <summary>
-    /// Connect multiple bookings records to customer
+    /// Connect multiple orders records to customer
     /// </summary>
-    public Task ConnectBookings(
+    public Task ConnectOrders(CustomerWhereUniqueInput uniqueId, OrderWhereUniqueInput[] ordersId);
+
+    /// <summary>
+    /// Disconnect multiple orders records from customer
+    /// </summary>
+    public Task DisconnectOrders(
         CustomerWhereUniqueInput uniqueId,
-        BookingWhereUniqueInput[] bookingsId
+        OrderWhereUniqueInput[] ordersId
     );
 
     /// <summary>
-    /// Disconnect multiple bookings records from customer
+    /// Find multiple orders records for customer
     /// </summary>
-    public Task DisconnectBookings(
+    public Task<List<Order>> FindOrders(
         CustomerWhereUniqueInput uniqueId,
-        BookingWhereUniqueInput[] bookingsId
+        OrderFindManyArgs OrderFindManyArgs
     );
 
     /// <summary>
-    /// Find multiple bookings records for customer
+    /// Update multiple orders records for customer
     /// </summary>
-    public Task<List<Booking>> FindBookings(
-        CustomerWhereUniqueInput uniqueId,
-        BookingFindManyArgs BookingFindManyArgs
-    );
-
-    /// <summary>
-    /// Update multiple bookings records for customer
-    /// </summary>
-    public Task UpdateBookings(
-        CustomerWhereUniqueInput uniqueId,
-        BookingWhereUniqueInput[] bookingsId
-    );
+    public Task UpdateOrders(CustomerWhereUniqueInput uniqueId, OrderWhereUniqueInput[] ordersId);
 }

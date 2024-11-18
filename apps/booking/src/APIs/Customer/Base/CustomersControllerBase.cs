@@ -114,18 +114,18 @@ public abstract class CustomersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Connect multiple bookings records to customer
+    /// Connect multiple orders records to customer
     /// </summary>
-    [HttpPost("{Id}/bookings")]
+    [HttpPost("{Id}/orders")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> ConnectBookings(
+    public async Task<ActionResult> ConnectOrders(
         [FromRoute()] CustomerWhereUniqueInput uniqueId,
-        [FromQuery()] BookingWhereUniqueInput[] bookingsId
+        [FromQuery()] OrderWhereUniqueInput[] ordersId
     )
     {
         try
         {
-            await _service.ConnectBookings(uniqueId, bookingsId);
+            await _service.ConnectOrders(uniqueId, ordersId);
         }
         catch (NotFoundException)
         {
@@ -136,18 +136,18 @@ public abstract class CustomersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Disconnect multiple bookings records from customer
+    /// Disconnect multiple orders records from customer
     /// </summary>
-    [HttpDelete("{Id}/bookings")]
+    [HttpDelete("{Id}/orders")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> DisconnectBookings(
+    public async Task<ActionResult> DisconnectOrders(
         [FromRoute()] CustomerWhereUniqueInput uniqueId,
-        [FromBody()] BookingWhereUniqueInput[] bookingsId
+        [FromBody()] OrderWhereUniqueInput[] ordersId
     )
     {
         try
         {
-            await _service.DisconnectBookings(uniqueId, bookingsId);
+            await _service.DisconnectOrders(uniqueId, ordersId);
         }
         catch (NotFoundException)
         {
@@ -158,18 +158,18 @@ public abstract class CustomersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Find multiple bookings records for customer
+    /// Find multiple orders records for customer
     /// </summary>
-    [HttpGet("{Id}/bookings")]
+    [HttpGet("{Id}/orders")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<Booking>>> FindBookings(
+    public async Task<ActionResult<List<Order>>> FindOrders(
         [FromRoute()] CustomerWhereUniqueInput uniqueId,
-        [FromQuery()] BookingFindManyArgs filter
+        [FromQuery()] OrderFindManyArgs filter
     )
     {
         try
         {
-            return Ok(await _service.FindBookings(uniqueId, filter));
+            return Ok(await _service.FindOrders(uniqueId, filter));
         }
         catch (NotFoundException)
         {
@@ -178,18 +178,18 @@ public abstract class CustomersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Update multiple bookings records for customer
+    /// Update multiple orders records for customer
     /// </summary>
-    [HttpPatch("{Id}/bookings")]
+    [HttpPatch("{Id}/orders")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> UpdateBookings(
+    public async Task<ActionResult> UpdateOrders(
         [FromRoute()] CustomerWhereUniqueInput uniqueId,
-        [FromBody()] BookingWhereUniqueInput[] bookingsId
+        [FromBody()] OrderWhereUniqueInput[] ordersId
     )
     {
         try
         {
-            await _service.UpdateBookings(uniqueId, bookingsId);
+            await _service.UpdateOrders(uniqueId, ordersId);
         }
         catch (NotFoundException)
         {

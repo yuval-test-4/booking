@@ -34,12 +34,10 @@ public abstract class CustomersServiceBase : ICustomersService
         {
             customer.Id = createDto.Id;
         }
-        if (createDto.Bookings != null)
+        if (createDto.Orders != null)
         {
-            customer.Bookings = await _context
-                .Bookings.Where(booking =>
-                    createDto.Bookings.Select(t => t.Id).Contains(booking.Id)
-                )
+            customer.Orders = await _context
+                .Orders.Where(order => createDto.Orders.Select(t => t.Id).Contains(order.Id))
                 .ToListAsync();
         }
 
@@ -77,7 +75,7 @@ public abstract class CustomersServiceBase : ICustomersService
     public async Task<List<Customer>> Customers(CustomerFindManyArgs findManyArgs)
     {
         var customers = await _context
-            .Customers.Include(x => x.Bookings)
+            .Customers.Include(x => x.Orders)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
@@ -123,10 +121,10 @@ public abstract class CustomersServiceBase : ICustomersService
     {
         var customer = updateDto.ToModel(uniqueId);
 
-        if (updateDto.Bookings != null)
+        if (updateDto.Orders != null)
         {
-            customer.Bookings = await _context
-                .Bookings.Where(booking => updateDto.Bookings.Select(t => t).Contains(booking.Id))
+            customer.Orders = await _context
+                .Orders.Where(order => updateDto.Orders.Select(t => t).Contains(order.Id))
                 .ToListAsync();
         }
 
@@ -150,15 +148,15 @@ public abstract class CustomersServiceBase : ICustomersService
     }
 
     /// <summary>
-    /// Connect multiple bookings records to customer
+    /// Connect multiple orders records to customer
     /// </summary>
-    public async Task ConnectBookings(
+    public async Task ConnectOrders(
         CustomerWhereUniqueInput uniqueId,
-        BookingWhereUniqueInput[] childrenIds
+        OrderWhereUniqueInput[] childrenIds
     )
     {
         var parent = await _context
-            .Customers.Include(x => x.Bookings)
+            .Customers.Include(x => x.Orders)
             .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (parent == null)
         {
@@ -166,33 +164,33 @@ public abstract class CustomersServiceBase : ICustomersService
         }
 
         var children = await _context
-            .Bookings.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
+            .Orders.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
             .ToListAsync();
         if (children.Count == 0)
         {
             throw new NotFoundException();
         }
 
-        var childrenToConnect = children.Except(parent.Bookings);
+        var childrenToConnect = children.Except(parent.Orders);
 
         foreach (var child in childrenToConnect)
         {
-            parent.Bookings.Add(child);
+            parent.Orders.Add(child);
         }
 
         await _context.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Disconnect multiple bookings records from customer
+    /// Disconnect multiple orders records from customer
     /// </summary>
-    public async Task DisconnectBookings(
+    public async Task DisconnectOrders(
         CustomerWhereUniqueInput uniqueId,
-        BookingWhereUniqueInput[] childrenIds
+        OrderWhereUniqueInput[] childrenIds
     )
     {
         var parent = await _context
-            .Customers.Include(x => x.Bookings)
+            .Customers.Include(x => x.Orders)
             .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (parent == null)
         {
@@ -200,45 +198,45 @@ public abstract class CustomersServiceBase : ICustomersService
         }
 
         var children = await _context
-            .Bookings.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
+            .Orders.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
             .ToListAsync();
 
         foreach (var child in children)
         {
-            parent.Bookings?.Remove(child);
+            parent.Orders?.Remove(child);
         }
         await _context.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Find multiple bookings records for customer
+    /// Find multiple orders records for customer
     /// </summary>
-    public async Task<List<Booking>> FindBookings(
+    public async Task<List<Order>> FindOrders(
         CustomerWhereUniqueInput uniqueId,
-        BookingFindManyArgs customerFindManyArgs
+        OrderFindManyArgs customerFindManyArgs
     )
     {
-        var bookings = await _context
-            .Bookings.Where(m => m.CustomerId == uniqueId.Id)
+        var orders = await _context
+            .Orders.Where(m => m.CustomerId == uniqueId.Id)
             .ApplyWhere(customerFindManyArgs.Where)
             .ApplySkip(customerFindManyArgs.Skip)
             .ApplyTake(customerFindManyArgs.Take)
             .ApplyOrderBy(customerFindManyArgs.SortBy)
             .ToListAsync();
 
-        return bookings.Select(x => x.ToDto()).ToList();
+        return orders.Select(x => x.ToDto()).ToList();
     }
 
     /// <summary>
-    /// Update multiple bookings records for customer
+    /// Update multiple orders records for customer
     /// </summary>
-    public async Task UpdateBookings(
+    public async Task UpdateOrders(
         CustomerWhereUniqueInput uniqueId,
-        BookingWhereUniqueInput[] childrenIds
+        OrderWhereUniqueInput[] childrenIds
     )
     {
         var customer = await _context
-            .Customers.Include(t => t.Bookings)
+            .Customers.Include(t => t.Orders)
             .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (customer == null)
         {
@@ -246,7 +244,7 @@ public abstract class CustomersServiceBase : ICustomersService
         }
 
         var children = await _context
-            .Bookings.Where(a => childrenIds.Select(x => x.Id).Contains(a.Id))
+            .Orders.Where(a => childrenIds.Select(x => x.Id).Contains(a.Id))
             .ToListAsync();
 
         if (children.Count == 0)
@@ -254,7 +252,7 @@ public abstract class CustomersServiceBase : ICustomersService
             throw new NotFoundException();
         }
 
-        customer.Bookings = children;
+        customer.Orders = children;
         await _context.SaveChangesAsync();
     }
 }

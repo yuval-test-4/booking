@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Booking.Infrastructure.Models;
 
-[Table("Bookings")]
-public class BookingDbModel
+[Table("Orders")]
+public class OrderDbModel
 {
     [Required()]
     public DateTime CreatedAt { get; set; }

@@ -9,10 +9,10 @@ public static class CustomersExtensions
     {
         return new Customer
         {
-            Bookings = model.Bookings?.Select(x => x.Id).ToList(),
             CreatedAt = model.CreatedAt,
             Id = model.Id,
             Name = model.Name,
+            Orders = model.Orders?.Select(x => x.Id).ToList(),
             UpdatedAt = model.UpdatedAt,
         };
     }
