@@ -198,4 +198,13 @@ public abstract class CustomersControllerBase : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("{Id}/calculate-balance")]
+    [Authorize(Roles = "user")]
+    public async Task<bool> CalculateBalance(
+        [FromBody()] CustomerWhereUniqueInput customerWhereUniqueInputDto
+    )
+    {
+        return await _service.CalculateBalance(customerWhereUniqueInputDto);
+    }
 }

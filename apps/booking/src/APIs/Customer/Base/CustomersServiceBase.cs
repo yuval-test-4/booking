@@ -255,4 +255,9 @@ public abstract class CustomersServiceBase : ICustomersService
         customer.Orders = children;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool> CalculateBalance(CustomerWhereUniqueInput customerWhereUniqueInputDto)
+    {
+        throw new NotImplementedException();
+    }
 }

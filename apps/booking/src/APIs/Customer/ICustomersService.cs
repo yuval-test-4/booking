@@ -60,4 +60,5 @@ public interface ICustomersService
     /// Update multiple orders records for customer
     /// </summary>
     public Task UpdateOrders(CustomerWhereUniqueInput uniqueId, OrderWhereUniqueInput[] ordersId);
+    public Task<bool> CalculateBalance(CustomerWhereUniqueInput customerWhereUniqueInputDto);
 }
