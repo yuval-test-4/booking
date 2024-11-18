@@ -31,6 +31,25 @@ public abstract class CustomersControllerBase : ControllerBase
     }
 
     /// <summary>
+    /// Delete one customer
+    /// </summary>
+    [HttpDelete("{Id}")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> DeleteCustomer([FromRoute()] CustomerWhereUniqueInput uniqueId)
+    {
+        try
+        {
+            await _service.DeleteCustomer(uniqueId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
     /// Find many customers
     /// </summary>
     [HttpGet()]
